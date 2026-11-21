@@ -23,7 +23,7 @@ Personal task app for one owner who runs four areas: Baselab (short-form video c
 - Try it at 390px wide (phone) and 1280px (desktop).
 
 ## Current state
-v1 scaffold: builds, not yet deployed or tested against a real Supabase project.
+v1 scaffold builds. Supabase project `daily-board` (ref yfxruqacrjuylmneanzp) has the schema applied and "Confirm email" off. Vercel project `daily-board` is linked to this repo with the env vars set (GCAL_ICS_URL pending). First real sign-in not done yet.
 
 ## Next up
 Follow the kickoff prompt in the plan doc: install, env, local test, fixes, deploy.

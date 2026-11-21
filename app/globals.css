@@ -1123,3 +1123,60 @@ button.ae-main:hover b{color:var(--accent)}
 .ae-stack .ic svg{width:12px;height:12px}
 .ae-stack .ic.logo svg{width:100%;height:100%}
 .ae-stack .ic.mono{font-size:10px}
+/* ---------- Health HQ polish: closer to the mockup, calmer cards, small motions ---------- */
+.hq .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hq-avatar{flex:none;width:40px;height:40px;border-radius:20px;background:var(--hq-sunk);color:var(--hq-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.hq-stepbar{display:block;height:3px;border-radius:2px;background:var(--hq-line2);overflow:hidden;margin:-4px 0 2px}
+.hq-stepbar i{display:block;height:100%;background:var(--hq-blue);border-radius:2px;transition:width .35s ease}
+.hq-tick span{transition:background .18s,border-color .18s}
+.hq-tick svg{opacity:0;transform:scale(.4);transition:opacity .15s,transform .22s cubic-bezier(.3,1.6,.5,1)}
+.hq-step.done .hq-tick svg{opacity:1;transform:none}
+.hq-tick:hover span{border-color:var(--hq-blue)}
+.hq-step.is-now{padding:16px 0 18px}
+.hq-step.is-now .hq-stepbody{animation:hqin .25s ease-out}
+@keyframes hqin{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.hq-stepmid{display:flex;align-items:center;gap:12px}
+.hq-stepmid .hq-stepdetail{flex:1}
+.hq-plate{flex:none;width:96px;height:96px;object-fit:cover;border-radius:16px}
+.hq-inline{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.hq-inline input{width:110px;height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--hq-line);background:var(--hq-card);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+.hq-inline input:focus,.hq-form input:focus{outline:none;border-color:var(--hq-blue);box-shadow:0 0 0 3px var(--hq-tint)}
+.hq-inline .unit{color:var(--hq-muted);margin-right:4px}
+.hq-alldone{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-size:15px;color:var(--hq-muted)}
+.hq-alldone svg{color:var(--hq-blue)}
+/* tracking cards: soft filled, no borders, like the mockup */
+.hq .hq-cal,.hq .hq-tiles3 .hq-tile{background:var(--hq-sunk);border-color:transparent}
+.hq .hq-goal{background:var(--hq-sunk);color:var(--hq-ink)}
+.hq .hq-goal .k{font-size:13px;letter-spacing:0;text-transform:none;font-weight:500;color:var(--hq-muted)}
+.hq .hq-goal .t{font-size:16px}
+.hq .hq-goal-r .n{font-size:22px}
+.hq .hq-goal-r .s{color:var(--hq-muted)}
+/* the workout header and goal hero use the one accent, as in the mockup */
+.hq .hq-hero,.hq .hq-whead{background:var(--hq-blue);color:#fff}
+.hq .hq-hero .grid{border-top-color:rgba(255,255,255,.35)}
+.hq button.hq-cal:active,.hq button.hq-tile:active,.hq .hq-goal:active,.hq .hq-wrow:active,.hq .hq-row:active{transform:scale(.985)}
+.hq .hq-cal,.hq .hq-tile,.hq .hq-goal,.hq .hq-wrow,.hq .hq-row{transition:transform .12s,background .15s}
+/* this week */
+.hq-week{list-style:none;margin:0;padding:0}
+.hq-wrow{display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;border-bottom:1px solid var(--hq-line2);text-align:left;color:var(--hq-ink)}
+.hq-week li:last-child .hq-wrow{border-bottom:0}
+.hq-wrow .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.hq-wrow .t{font-size:16px;line-height:22px;font-weight:500}
+.hq-wrow .s{font-size:13px;line-height:18px;color:var(--hq-muted)}
+.hq-wrow svg{flex:none;color:var(--hq-muted)}
+.hq-wrow .ok{flex:none;width:24px;height:24px;border-radius:12px;background:var(--hq-tint);color:var(--hq-blue);display:flex;align-items:center;justify-content:center}
+.hq-wrow.done .t{color:var(--hq-muted)}
+/* sheets */
+.hq-link{color:var(--accent);font-weight:600;font-size:15px;align-self:flex-start}
+.hq-sheethead{display:flex;justify-content:space-between;align-items:center}
+.hq-sheet .hq-sheetbig b{font-size:30px;line-height:36px;letter-spacing:-.02em}
+.hq-sheet .hq-mrow{display:flex;flex-direction:column;gap:6px}
+.hq-sheet .hq-mrow .hq-mr{margin:0}
+.hq-sheet .hq-bar.ink i{background:var(--accent)}
+.hq-sheetacts{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.hq-sheet .hq-btn{background:var(--accent)}
+.hq-sheet .hq-btn.ghost{background:var(--card);border:1px solid var(--line);color:var(--text)!important}
+#h-sets-form .hq-link{margin:-4px 0 2px}
+.hq-sheet a{text-decoration:none}
+.hq-setlinks{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hq-setlinks .hq-link{align-self:auto}

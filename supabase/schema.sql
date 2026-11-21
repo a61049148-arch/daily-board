@@ -319,3 +319,12 @@ begin
   return bid;
 end $$;
 grant execute on function public.log_build(text, jsonb) to anon, authenticated;
+
+-- ---------- Task priority and who can do it ----------
+-- priority: '', high, medium, low. claude: '' (not set), yes (Claude can do it), help (Claude helps, needs you), you (needs you).
+alter table public.tasks add column if not exists priority text not null default '';
+alter table public.tasks add column if not exists claude   text not null default '';
+alter table public.tasks drop constraint if exists tasks_priority_check;
+alter table public.tasks add constraint tasks_priority_check check (priority in ('', 'high', 'medium', 'low'));
+alter table public.tasks drop constraint if exists tasks_claude_check;
+alter table public.tasks add constraint tasks_claude_check check (claude in ('', 'yes', 'help', 'you'));

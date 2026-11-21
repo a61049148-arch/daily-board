@@ -550,3 +550,52 @@ button.htile:hover{background:var(--fill)}
   .htoday{border-radius:18px;padding:14px 16px}
   .hcard{border-radius:18px}
 }
+
+/* ---------- cleanup: theme switch, foldable sidebar, calmer surfaces ---------- */
+.brand .sp{flex:1}
+.brand .iconbtn{width:28px;height:28px;flex:none}
+.sideopen{display:none}
+@media (min-width:761px){
+  .app.side-closed{grid-template-columns:minmax(0,1fr)}
+  .app.side-closed aside{display:none}
+  .app.side-closed .sideopen{display:grid;position:fixed;top:calc(14px + env(safe-area-inset-top));left:14px;z-index:6;background:var(--card);border:1px solid var(--line);box-shadow:var(--sh1)}
+  .app.side-closed #page{padding-left:72px}
+}
+@media (max-width:760px){.sidebtn,.sideopen{display:none!important}}
+aside .signout{display:none}
+.alist.more{margin-top:-8px}
+
+/* neutral titles: area color stays on dots, checks and logos only */
+h1,h2{color:var(--text)}
+
+/* active sidebar tile: quiet tint instead of a solid block of color */
+.tile[aria-current="page"]{background:color-mix(in srgb,var(--c) 12%,var(--card));border-color:color-mix(in srgb,var(--c) 30%,var(--line));color:var(--text)}
+.tile[aria-current="page"] .l{color:var(--text)}
+.tile[aria-current="page"] .ic{background:var(--c);color:var(--on)}
+
+/* All page: compact area cards */
+.acards{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.acard{padding:12px;gap:8px;border-radius:12px}
+.acard .nm{font-size:15px}
+.acard .big{font-size:22px}
+@media (max-width:1100px){.acards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* add rows: area picker only while typing */
+.add select{display:none}
+.add:focus-within select,.sheet .add select{display:block}
+
+/* settings */
+.seg.wide{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-self:stretch;width:100%}
+.seg.wide button{text-align:center;padding:8px 10px}
+.setrow{gap:10px}
+.setrow svg{width:16px;height:16px}
+.setrow .setgo{display:block;font-size:12px;color:var(--muted);font-weight:500}
+@media (max-width:760px){.setrow .setgo{color:var(--accent);font-weight:600;font-size:15px}}
+/* health header on phone: subtitle gets the full width under the title */
+@media (max-width:760px){
+  .health .hero{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px}
+  .health .hero .grow{display:contents}
+  .health .hero h1{grid-row:1;grid-column:1}
+  .health .hero .btn{grid-row:1;grid-column:2}
+  .health .hero .sub{grid-row:2;grid-column:1/-1}
+}

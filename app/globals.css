@@ -321,6 +321,14 @@ ul.list{list-style:none;margin:0;padding:0}
 .row.sw-l::before{content:"Snooze";right:14px}
 .row.sw-go::before{color:#fff}
 
+.nowtag{display:none}
+.donebtn{padding:6px 12px;margin-right:4px}
+.donebtn svg{width:14px;height:14px}
+.now .bigcheck{display:none}
+.tip{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 0 8px;border-radius:10px;background:var(--sunk);font-size:13.5px;color:var(--text2)}
+.tip span{flex:1}
+.setrow .setgo{margin-left:auto;color:var(--accent);font-weight:600;display:none}
+
 /* phone tab bar */
 .tabbar{display:none}
 
@@ -363,6 +371,23 @@ ul.list{list-style:none;margin:0;padding:0}
   .add .plus{width:48px}
   .pill{padding:8px 10px;font-size:15px}
   .qa-hint{max-width:40%}
+  .hero h1{font-size:28px}
+  .kicker{font-size:13px}
+  .nowtag{display:block;width:100%;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+  .now{flex-direction:column;gap:4px}
+  .now .pills{margin:10px 0 0 0;gap:6px}
+  .donebtn{padding:10px 18px;font-size:15px;border-radius:10px}
+  .now .pill{background:var(--fill);border-radius:10px;padding:10px 12px}
+  .tiles .tile[data-view="today"],.tiles .tile[data-view="scheduled"],.tiles .tile[data-view="people"]{display:none}
+  .tiles{grid-template-columns:1fr}
+  aside>*{flex-shrink:0}
+  .tiles .tile{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;border:0;box-shadow:var(--sh1)}
+  .tiles .tile .l{order:1;flex:1;color:var(--text);font-size:17px;font-weight:500}
+  .tiles .tile .n{order:2;font-size:17px;font-weight:400;color:var(--muted);font-family:var(--font)}
+  .side-foot{margin-top:8px}
+  .setrow{background:var(--card);border-radius:14px;padding:14px 12px;font-size:16px;color:var(--text);box-shadow:var(--sh1)}
+  .setrow svg{width:18px;height:18px;color:var(--accent)}
+  .setrow .setgo{display:block}
   .colmain>.brief{order:1;border-bottom:0;padding-bottom:0}
   .colmain>.brief~section:has(.link[data-act="show-done"]){order:2}
   .nudge{padding:10px 10px 10px 12px;gap:10px}

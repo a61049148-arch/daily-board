@@ -5,6 +5,9 @@ create or replace function public.db_owner() returns uuid
 language sql stable security definer set search_path = public, auth as $$
   select coalesce(auth.uid(), (select id from auth.users order by created_at limit 1))
 $$;
+-- Only signed-in users (and the Supabase connector) may call it; stops anonymous lookups of the owner id.
+revoke execute on function public.db_owner() from public, anon;
+grant execute on function public.db_owner() to authenticated, service_role;
 
 create or replace function public.db_now_ms() returns bigint
 language sql stable as $$ select (extract(epoch from clock_timestamp()) * 1000)::bigint $$;

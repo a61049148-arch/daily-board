@@ -7,6 +7,8 @@ const DAY = 864e5;
 
 function ymdUTC(d) { return d.toISOString().slice(0, 10); }
 
+function text(v) { return String(v && typeof v === "object" ? v.val || "" : v || "").trim(); }
+
 function toEvent(ev, start, end, allDay) {
   return {
     summary: ev.summary && typeof ev.summary === "object" ? ev.summary.val : ev.summary || "Busy",
@@ -14,6 +16,9 @@ function toEvent(ev, start, end, allDay) {
     end: allDay ? { date: ymdUTC(end) } : { dateTime: end.toISOString() },
     transparency: String(ev.transparency || "").toLowerCase() === "transparent" ? "transparent" : "opaque",
     status: String(ev.status || "").toLowerCase(),
+    location: text(ev.location).slice(0, 200),
+    description: text(ev.description).slice(0, 1000),
+    url: /^https:\/\//.test(text(ev.url)) ? text(ev.url) : "",
   };
 }
 

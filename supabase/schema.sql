@@ -118,3 +118,30 @@ drop policy if exists "owner only" on public.push_subs;
 create policy "owner only" on public.push_subs for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 drop trigger if exists push_subs_touch on public.push_subs;
 create trigger push_subs_touch before update on public.push_subs for each row execute function public.db_touch();
+
+-- ---------- v1.2: Health section logs ----------
+-- One row per entry: weight (w-<day>), waist (z-<day>), sets (s-<day>-<exercise>), meal (m-<day>-<meal>), session (t-<day>), boxing (b-<day>).
+-- Safe to run more than once.
+create table if not exists public.health_logs (
+  id          text not null,
+  user_id     uuid not null default public.db_owner() references auth.users(id) on delete cascade,
+  day         date not null,
+  kind        text not null check (kind in ('weight','waist','sets','meal','session','boxing')),
+  key         text not null default '',
+  data        jsonb not null default '{}'::jsonb,
+  created     timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  primary key (user_id, id)
+);
+create index if not exists health_logs_user_day on public.health_logs (user_id, day);
+alter table public.health_logs enable row level security;
+drop policy if exists "owner only" on public.health_logs;
+create policy "owner only" on public.health_logs for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+alter table public.health_logs replica identity full;
+drop trigger if exists health_logs_touch on public.health_logs;
+create trigger health_logs_touch before update on public.health_logs for each row execute function public.db_touch();
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'health_logs') then
+    alter publication supabase_realtime add table public.health_logs;
+  end if;
+end $$;

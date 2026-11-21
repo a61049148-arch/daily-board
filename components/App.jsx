@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { makeDb, makeSample, makeCalendar } from "@/lib/adapters";
+import { makeDb, makeSample, makeCalendar, makePush } from "@/lib/adapters";
 import { startBoard } from "@/lib/board";
 import { SHELL } from "@/components/shell";
 
@@ -29,7 +29,7 @@ function Board({ userId }) {
   const ref = useRef(null);
   useEffect(() => {
     const sb = supabase();
-    startBoard({ db: makeDb(sb, userId), sample: makeSample(sb), calendar: makeCalendar(sb) });
+    startBoard({ db: makeDb(sb, userId), sample: makeSample(sb), calendar: makeCalendar(sb), push: makePush(sb) });
     const btn = document.getElementById("signout");
     if (btn) btn.onclick = async () => { await sb.auth.signOut(); location.reload(); };
   }, [userId]);

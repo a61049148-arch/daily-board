@@ -126,7 +126,7 @@ create table if not exists public.health_logs (
   id          text not null,
   user_id     uuid not null default public.db_owner() references auth.users(id) on delete cascade,
   day         date not null,
-  kind        text not null check (kind in ('weight','waist','sets','meal','session','boxing')),
+  kind        text not null check (kind in ('weight','waist','sets','meal','session','boxing','step')),
   key         text not null default '',
   data        jsonb not null default '{}'::jsonb,
   created     timestamptz not null default now(),
@@ -255,3 +255,7 @@ $$;
 grant execute on function public.log_build(text, jsonb) to anon, authenticated;
 grant execute on function public.vault_feed(text, date, text) to anon, authenticated;
 grant execute on function public.recent_builds(text, integer) to anon, authenticated;
+
+-- v1.3 Health HQ steps: allow 'step' logs (routine items like phone away / lights out).
+alter table public.health_logs drop constraint if exists health_logs_kind_check;
+alter table public.health_logs add constraint health_logs_kind_check check (kind in ('weight','waist','sets','meal','session','boxing','step'));

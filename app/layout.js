@@ -26,6 +26,10 @@ export default function RootLayout({ children }) {
       <head>
         {/* Apply the saved light/dark choice before first paint so the page doesn't flash. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/* DM Sans is the Health HQ typeface; only the Health view uses it. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
       </head>
       <body>{children}</body>
     </html>

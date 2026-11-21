@@ -12,6 +12,7 @@ Personal task app for one owner who runs four areas: Baselab (short-form video c
 - Data goes through `env.db` (see `lib/adapters.js`): `collection(c).onSnapshot`, `doc("c/id").set(obj)`, `doc("c/id").delete()`. Objects use camelCase fields; the adapter maps them to snake_case columns via `SPEC`. When you add a column, update `supabase/schema.sql` (as an idempotent change), `SPEC`, and the board.
 - `env.sample.json(prompt, {modelTier})` calls `/api/ai` (Claude, JSON-only replies). `env.calendar()` calls `/api/calendar`.
 - Server routes check the Supabase token and `ALLOWED_EMAIL` in `lib/server-auth.js`. Never expose `ANTHROPIC_API_KEY` or a Supabase service key to the client.
+- Build log: `public.builds` (written by the build-log skill), daily recaps in `public.recaps` (`lib/recap.js`, run from the tick after 9 PM), Obsidian sync plugin in `obsidian-plugin/`. Setup: `docs/build-log-setup.md`.
 - Reminders: `public/sw.js` shows pushes. `/api/push/tick` runs every minute from Supabase pg_cron (`supabase/reminders-cron.sql`) and uses the service key via `lib/push-server.js`. `lib/recur.js` holds date logic shared by board and server (repeats, reminder times). Setup steps: `docs/reminders-setup.md`.
 
 ## Design rules (the owner rejected gradient/glow "AI" looks)

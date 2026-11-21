@@ -419,3 +419,17 @@ html,body{overscroll-behavior:none}
 .auth .err{color:var(--red);font-size:13.5px;min-height:1.2em}
 .auth .switch{font-size:13.5px;color:var(--muted)}
 .auth .btn{justify-content:center;padding:10px 14px}
+
+/* build log */
+.chip.on{background:var(--accent);color:#fff}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:1px}
+.chip.on .dot{background:#fff}
+.logrow{margin-top:6px}
+.row-sum{color:var(--text2);font-size:13.5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.row.build .row-title{color:var(--text)}
+.live{color:var(--green);font-weight:600}
+.recap{padding:2px 0 14px;display:flex;flex-direction:column;gap:8px}
+.recap p{margin:0;font-size:15px;line-height:1.5;color:var(--text);max-width:64ch;text-wrap:pretty}
+.bsum{margin:0;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.bsum a{color:var(--accent)}
+.bpts{margin:0;padding-left:20px;font-size:15px;line-height:1.5}

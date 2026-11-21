@@ -1,5 +1,5 @@
 // Called every minute by Supabase pg_cron (see supabase/reminders-cron.sql). Sends due reminders and the morning summary.
-import { adminDb, cronOk, missing, notConfigured, sendAll, taskPayload } from "@/lib/push-server";
+import { adminDb, areaNames, cronOk, missing, notConfigured, sendAll, taskPayload } from "@/lib/push-server";
 import { runRecap } from "@/lib/recap";
 import { addDays, localNow, parseHM, remindKey, remindStamp, stamp } from "@/lib/recur";
 
@@ -12,7 +12,7 @@ function asTask(r) { return { due: r.due, atTime: r.at_time, remindMin: r.remind
 
 async function runUser(userId, subs) {
   const db = adminDb(), tz = subs[0].tz, now = localNow(tz), nowS = stamp(now.ymd, now.mins);
-  let sent = 0;
+  let sent = 0, names = null;
 
   const { data: timed } = await db.from("tasks").select("*").eq("user_id", userId).eq("done", false).neq("at_time", "")
     .not("remind_min", "is", null).gte("due", addDays(now.ymd, -1)).lte("due", addDays(now.ymd, 1));
@@ -20,7 +20,8 @@ async function runUser(userId, subs) {
     const at = remindStamp(asTask(t)), key = remindKey(asTask(t));
     if (at == null || at > nowS || nowS - at > LATE_LIMIT || t.reminded_key === key) continue;
     await db.from("tasks").update({ reminded_key: key }).eq("id", t.id);
-    sent += await sendAll(subs, taskPayload(t, Number(t.remind_min) || 0));
+    if (!names) names = await areaNames(db, userId);
+    sent += await sendAll(subs, taskPayload(t, Number(t.remind_min) || 0, names));
   }
 
   const morning = subs.filter((s) => {

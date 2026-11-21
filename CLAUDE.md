@@ -16,6 +16,7 @@ Personal task app for one owner who runs four areas: Baselab (short-form video c
 - Reminders: `public/sw.js` shows pushes. `/api/push/tick` runs every minute from Supabase pg_cron (`supabase/reminders-cron.sql`) and uses the service key via `lib/push-server.js`. `lib/recur.js` holds date logic shared by board and server (repeats, reminder times). Setup steps: `docs/reminders-setup.md`.
 - Health: `lib/health-plan.js` holds Seni's plan from Health HQ (workouts, meals with times, targets, checkpoints, daily routine); edit it when the plan changes. `lib/health.js` renders the Health view in the Health HQ look (https://claude.ai/artifact/TFTRiSJZ4WW4pEtKCQsQXP: DM Sans, navy and one blue, `.hq` styles in `app/globals.css`) with Today (steps), Train, Food and Progress, plus the Today card. Logs go to `health_logs` (ids like `w-<day>`, `s-<day>-<exercise>`, `m-<day>-<meal>`, `r-<day>-<step>`).
 
+- Areas: built-in four live in `DEFAULT_AREAS` (`lib/board.js`); the owner's edits and new areas are rows in `public.areas` (merged over the defaults, cached in localStorage, local-only fallback if the table is missing). Use `area(id)`, `col(id)` and `areaIcon(a)`, never hardcode area ids. Server names come from `areaNames()` in `lib/push-server.js`.
 - Demo: `/demo` (`components/Demo.jsx`, `lib/demo.js`) runs the board on in-memory sample data with no sign-in. Locally: `npm install`, `npm run demo`, open http://localhost:3000/demo.
 
 ## Design rules (the owner rejected gradient/glow "AI" looks)

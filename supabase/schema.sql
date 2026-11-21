@@ -259,3 +259,63 @@ grant execute on function public.recent_builds(text, integer) to anon, authentic
 -- v1.3 Health HQ steps: allow 'step' logs (routine items like phone away / lights out).
 alter table public.health_logs drop constraint if exists health_logs_kind_check;
 alter table public.health_logs add constraint health_logs_kind_check check (kind in ('weight','waist','sets','meal','session','boxing','step'));
+
+-- ---------- v1.4: editable areas ----------
+-- One row per area the owner changed or added (id = 'baselab', 'dg', 'truenorth', 'personal' or a new slug).
+-- The board falls back to its built-in four when a row is missing. Safe to run more than once.
+create table if not exists public.areas (
+  id          text not null,
+  user_id     uuid not null default public.db_owner() references auth.users(id) on delete cascade,
+  name        text not null default '',
+  short       text not null default '',
+  color       text not null default '',        -- '#rrggbb', or '' for the built-in color
+  icon        text not null default '',        -- glyph name, or 'letter'
+  logo        text not null default '',        -- 'builtin', a small PNG data URL, or ''
+  about       text not null default '',        -- what the area covers; used by Plan my day and Brain dump
+  sort_order  bigint not null default public.db_now_ms(),
+  archived    boolean not null default false,
+  updated     timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  primary key (user_id, id)
+);
+alter table public.areas enable row level security;
+drop policy if exists "owner only" on public.areas;
+create policy "owner only" on public.areas for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+alter table public.areas replica identity full;
+drop trigger if exists areas_touch on public.areas;
+create trigger areas_touch before update on public.areas for each row execute function public.db_touch();
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'areas') then
+    alter publication supabase_realtime add table public.areas;
+  end if;
+end $$;
+
+-- Tasks, people and build log entries can now belong to any area, not only the first four.
+alter table public.tasks drop constraint if exists tasks_area_check;
+alter table public.people drop constraint if exists people_area_check;
+alter table public.builds drop constraint if exists builds_area_check;
+
+-- log_build accepts any of the owner's areas (built-in or added).
+create or replace function public.log_build(tok text, entry jsonb) returns text
+language plpgsql security definer set search_path = public as $$
+declare uid uuid := public.token_owner(tok); bid text; a text := lower(coalesce(entry->>'area', ''));
+begin
+  if uid is null then raise exception 'bad token' using errcode = '28000'; end if;
+  if coalesce(entry->>'title', '') = '' then raise exception 'title required'; end if;
+  if not (a in ('baselab','dg','truenorth','personal') or exists (select 1 from public.areas r where r.user_id = uid and r.id = a)) then a := 'personal'; end if;
+  bid := coalesce(nullif(entry->>'id', ''), public.db_new_id('b'));
+  insert into public.builds (id, user_id, area, size, title, summary, points, open_items, live, link, day, at_time)
+  values (bid, uid, a,
+    case when entry->>'size' = 'small' then 'small' else 'big' end,
+    left(entry->>'title', 200), left(coalesce(entry->>'summary', ''), 2000),
+    case when jsonb_typeof(entry->'points') = 'array' then entry->'points' else '[]'::jsonb end,
+    left(coalesce(entry->>'openItems', ''), 1000), coalesce((entry->>'live')::boolean, false),
+    left(coalesce(entry->>'link', ''), 500),
+    coalesce(nullif(entry->>'day', '')::date, (now() at time zone 'America/Los_Angeles')::date),
+    coalesce(nullif(entry->>'time', ''), to_char(now() at time zone 'America/Los_Angeles', 'HH24:MI')))
+  on conflict (id) do update set area = excluded.area, size = excluded.size, title = excluded.title, summary = excluded.summary,
+    points = excluded.points, open_items = excluded.open_items, live = excluded.live, link = excluded.link
+    where public.builds.user_id = uid;
+  return bid;
+end $$;
+grant execute on function public.log_build(text, jsonb) to anon, authenticated;

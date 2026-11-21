@@ -907,3 +907,146 @@ h1,h2{color:var(--text)}
   .hq-tile{padding:12px 10px}
   .hq-day{height:58px}
 }
+
+/* =====================================================================
+   Design pass: one accent (blue), neutral greys, red only for "now" and
+   "late". Area color appears only as an area's own mark and tiny dots.
+   ===================================================================== */
+:root{--hair:color-mix(in srgb,var(--text) 9%,transparent);--tint:color-mix(in srgb,var(--accent) 10%,transparent);--ring:color-mix(in srgb,var(--text) 28%,transparent)}
+
+/* sidebar: neutral tiles and rows, accent only on the selected item */
+.tile .ic,.tiles .tile .ic{background:var(--fill);color:var(--text2)}
+.tile[aria-current="page"]{background:var(--tint);border-color:color-mix(in srgb,var(--accent) 28%,var(--line))}
+.tile[aria-current="page"] .ic{background:var(--accent);color:#fff}
+.tile[aria-current="page"] .n{color:var(--accent)}
+.arow[aria-current="page"]{background:var(--fill)}
+#hlist .ic.sq{background:var(--fill);color:var(--text2)}
+
+/* titles and kickers in neutral */
+.kicker,.thead .kicker{color:var(--muted)}
+.day.is-today .dn{background:var(--text);color:var(--bg)}
+.day[aria-pressed="true"]:not(.is-today) .dn{color:var(--accent)}
+.dots i{background:var(--ring)!important}
+.day.is-today .dots i{background:var(--text2)!important}
+
+/* checkboxes: one neutral ring everywhere, accent when done */
+.check i,.ag-row .check i{border:1.5px solid var(--ring)}
+.check:hover i{background:var(--tint);border-color:var(--accent)}
+.row.done .check i,.ag-row.done .check i{background:var(--accent);border-color:var(--accent)}
+.now .adot,.tag::before{width:6px;height:6px}
+
+/* next up card */
+.now{border-radius:16px;padding:20px 22px;box-shadow:var(--sh1)}
+.now .label{color:var(--muted);font-weight:500}
+.now .label .time{color:var(--muted)}
+.pill{color:var(--text2)}
+.pill:hover{color:var(--text)}
+.pill svg{color:var(--muted)}
+
+/* ---------- desktop schedule: a real right-hand panel ---------- */
+@media (min-width:1101px){
+  main:has(.rail){margin-right:380px}
+  .cols{display:block}
+  .colmain{max-width:780px;margin:0 auto}
+  .rail{position:fixed;top:0;right:0;bottom:0;width:380px;max-height:none;border:0;border-left:1px solid var(--line);border-radius:0;background:var(--side);padding:calc(24px + env(safe-area-inset-top)) 18px 40px 14px;z-index:4;scrollbar-width:thin}
+  .rail .ag-head{position:sticky;top:-24px;z-index:2;margin:-24px -18px 6px -14px;padding:24px 18px 12px 18px;background:color-mix(in srgb,var(--side) 88%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+  .rail .ag-head h2{font-size:17px}
+  .rail .ag-row::after{border-color:var(--hair)}
+}
+.ag-head .ag-date{color:var(--muted);font-size:13px;font-weight:500}
+.ag-t{text-align:right;padding-right:12px;width:64px;font-size:12px;font-weight:500}
+.ag-t small{font-size:10px;font-weight:500;letter-spacing:.02em}
+.ag-row::after{left:64px}
+.ag-free{padding-left:64px;font-style:normal;font-size:12px}
+.ag-bar{width:3px;margin:9px 14px 9px 4px;background:var(--ring)}
+.ag-row.ev .ag-body b{color:var(--text);font-weight:500}
+.ag-row.free .ag-bar{border-left:2px dotted var(--ring);background:none}
+.ag-body{padding:9px 0;border-radius:8px}
+.ag-body b{font-size:14.5px;line-height:1.3}
+.ag-body small{font-size:12px;margin-top:1px}
+.ag-row{border-radius:10px;transition:background .12s}
+.ag-row:hover{background:color-mix(in srgb,var(--text) 4%,transparent)}
+.ag-row.past{opacity:.45}
+.ag-row.on{background:var(--tint)}
+.ag-body:hover b{text-decoration:none}
+.ag-now .ag-t{font-weight:600}
+.ag-line{height:1.5px}
+
+/* ---------- popup for schedule items ---------- */
+.overlay.pop{background:transparent;animation:none}
+.sheet.pop{position:fixed;max-width:none;padding:0;border-radius:14px;border:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.06),0 12px 40px rgba(0,0,0,.16);animation:popin .14s ease-out;max-height:calc(100vh - 24px)}
+:root[data-theme="dark"] .sheet.pop{box-shadow:0 0 0 1px rgba(255,255,255,.06),0 18px 50px rgba(0,0,0,.6)}
+@keyframes popin{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.peek{display:flex;flex-direction:column;gap:0}
+.sheet:not(.pop) .peek{margin:-22px;margin-bottom:-22px}
+.pk-head{display:flex;align-items:flex-start;gap:12px;padding:18px 14px 0 18px}
+.pk-mark{flex:none;margin-top:6px}
+.pk-mark.dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.pk-mark.bar{width:4px;height:20px;border-radius:2px;background:var(--ring);margin-top:2px}
+.pk-htext{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.sheet .pk-title{font-size:18px;line-height:1.25;font-weight:600;letter-spacing:-.012em;overflow-wrap:anywhere}
+.pk-sub{font-size:13px;color:var(--muted)}
+.pk-x{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--muted);margin-top:-4px}
+.pk-x:hover{background:var(--fill);color:var(--text)}
+.pk-x svg{width:14px;height:14px}
+.pk-time{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 18px 0;padding:12px 14px;border-radius:10px;background:var(--sunk)}
+.pk-tt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pk-tt b{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.pk-tt span{font-size:12.5px;color:var(--muted)}
+.pk-chip{flex:none;font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--tint);color:var(--accent);white-space:nowrap}
+.pk-chip.live{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red)}
+.pk-chip.past{background:var(--fill);color:var(--muted)}
+.pk-rows{list-style:none;margin:14px 18px 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.pk-rows li{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.4;color:var(--text2)}
+.pk-rows svg{width:16px;height:16px;color:var(--muted);flex:none;margin-top:1px}
+.pk-rows a{color:var(--accent);text-decoration:none}
+.pk-rows a:hover{text-decoration:underline}
+.pk-note{margin:14px 18px 0;font-size:13.5px;line-height:1.5;color:var(--text2);padding-left:12px;border-left:2px solid var(--line);max-height:160px;overflow:auto;overflow-wrap:anywhere}
+.pk-next{margin:16px 0 0;padding:12px 18px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:8px;font-size:13px;min-width:0}
+.pk-next span{color:var(--muted);flex:none}
+.pk-next b{font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.pk-next em{font-style:normal;color:var(--muted);flex:none;white-space:nowrap}
+.pk-acts{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px 14px;border-top:1px solid var(--line)}
+.pk-next+.pk-acts{border-top:1px solid var(--line)}
+.pk-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 11px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text);background:var(--fill);text-decoration:none;white-space:nowrap}
+.pk-btn:hover{background:color-mix(in srgb,var(--text) 12%,transparent)}
+.pk-btn svg{width:14px;height:14px;color:var(--text2)}
+.pk-btn.primary{background:var(--accent);color:#fff}
+.pk-btn.primary svg{color:#fff}
+.pk-btn.primary:hover{filter:brightness(1.07)}
+.peek .ok{color:var(--green)}
+@media (max-width:760px){
+  .sheet:not(.pop) .peek{margin:-22px -22px calc(-30px - env(safe-area-inset-bottom))}
+  .pk-head{padding:20px 16px 0 20px}
+  .sheet .pk-title{font-size:20px}
+  .pk-time,.pk-rows,.pk-note{margin-left:20px;margin-right:20px}
+  .pk-next{padding:14px 20px}
+  .pk-acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:8px;padding:14px 20px calc(18px + env(safe-area-inset-bottom))}
+  .pk-btn{height:48px;flex-direction:column;gap:3px;font-size:12px;border-radius:12px}
+  .pk-btn svg{width:18px;height:18px}
+}
+
+/* ---------- build log, area cards, health: same palette ---------- */
+.bl-ic{width:28px;height:28px}
+.bl-btn{border-radius:12px;box-shadow:none}
+.bl-stats>*{border-radius:12px}
+.bl-pill.open{background:var(--fill);color:var(--text2)}
+.bl-open{background:var(--sunk);border-left:3px solid var(--ring)}
+.acard{box-shadow:none}
+
+/* Health follows the board's palette and type */
+:root:root .hq.hq,:root:root .hq-sheet.hq-sheet{
+  --hq-blue:var(--accent); --hq-blue2:color-mix(in srgb,var(--accent) 85%,#000); --hq-ink:var(--text); --hq-muted:var(--muted);
+  --hq-line:var(--line); --hq-line2:var(--hair); --hq-tint:var(--tint); --hq-sunk:var(--sunk); --hq-card:var(--card); --hq-ring:var(--ring);
+  --hq-strong:var(--text); --hq-on-strong:var(--bg); --hq-band:var(--tint); --hq-bandline:color-mix(in srgb,var(--accent) 30%,transparent);
+  font-family:var(--font)!important;
+}
+.hq-head h1{font-family:var(--display)}
+.hq-goal,.hq-hero,.hq-whead{background:var(--text);color:var(--bg)}
+.hq-hero .grid{border-top-color:color-mix(in srgb,var(--bg) 25%,transparent)}
+/* the page's enter animation must not move the fixed schedule panel */
+#page:has(.rail).enter{animation:fadein .18s ease-out both}
+@keyframes fadein{from{opacity:.35}to{opacity:1}}
+.peek .pk-note{background:none;border-radius:0;padding:0 0 0 12px}
+.pk-acts .pk-btn{flex:1 1 auto;padding:0 9px}
+@media (min-width:761px){.demo-pill{top:12px;bottom:auto;right:auto;left:50%;transform:translateX(-50%)}}

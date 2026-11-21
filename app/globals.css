@@ -1050,3 +1050,5 @@ h1,h2{color:var(--text)}
 .peek .pk-note{background:none;border-radius:0;padding:0 0 0 12px}
 .pk-acts .pk-btn{flex:1 1 auto;padding:0 9px}
 @media (min-width:761px){.demo-pill{top:12px;bottom:auto;right:auto;left:50%;transform:translateX(-50%)}}
+/* the fixed schedule panel needs an explicit height, or it grows to its content and can't scroll */
+@media (min-width:1101px){.rail{height:100vh;height:100dvh;overscroll-behavior:contain}}

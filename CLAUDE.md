@@ -25,7 +25,10 @@ Personal task app for one owner who runs four areas: Baselab (short-form video c
 - Try it at 390px wide (phone) and 1280px (desktop).
 
 ## Current state
-v1 scaffold builds. Supabase project `daily-board` (ref yfxruqacrjuylmneanzp) has the schema applied and "Confirm email" off. Vercel project `daily-board` is linked to this repo with the env vars set (GCAL_ICS_URL pending). First real sign-in not done yet.
+Live at https://daily-board-rho.vercel.app (Vercel project `daily-board`, deploys on push to main).
+- Supabase project `daily-board` (ref yfxruqacrjuylmneanzp): schema applied, "Confirm email" off, new sign-ups off, owner account created.
+- Vercel env vars all set, including GCAL_ICS_URL ("Seni's Calendar").
+- Anthropic key `daily-board-vercel` in the Default workspace, $10/month workspace limit.
 
 ## Next up
 Follow the kickoff prompt in the plan doc: install, env, local test, fixes, deploy.

@@ -1053,6 +1053,76 @@ h1,h2{color:var(--text)}
 /* the fixed schedule panel needs an explicit height, or it grows to its content and can't scroll */
 @media (min-width:1101px){.rail{height:100vh;height:100dvh;overscroll-behavior:contain}}
 
+/* ---------- My areas: editor ---------- */
+.side-h{display:flex;align-items:center;justify-content:space-between}
+.side-edit{font-size:12px;font-weight:600;color:var(--muted);padding:2px 6px;border-radius:6px;opacity:0;transition:opacity .15s,background .12s,color .12s}
+aside:hover .side-edit,.side-edit:focus-visible{opacity:1}
+.side-edit:hover{color:var(--accent);background:var(--fill)}
+@media (max-width:760px){.side-edit{opacity:1;font-family:var(--font);font-size:17px;font-weight:400;color:var(--accent);padding:4px 2px;letter-spacing:0}.side-edit:hover{background:none}}
+@media (hover:none){.side-edit{opacity:1}}
+.ic.mono{font-family:var(--round);font-weight:700;font-size:12px;letter-spacing:-.02em}
+.ic.lg.mono{font-size:19px}
+.ic.logo.img{overflow:hidden;border-radius:23%}
+.ic.logo.img img{width:100%;height:100%;object-fit:cover;display:block}
+.hero .hero-edit{flex:none;align-self:center;opacity:.0;transition:opacity .15s}
+.hero:hover .hero-edit,.hero-edit:focus-visible{opacity:1}
+@media (hover:none){.hero .hero-edit{opacity:1}}
+.hero-edit svg{width:17px;height:17px}
+.iconbtn:hover{background:var(--fill);color:var(--text)}
+.iconbtn:disabled{opacity:.3;pointer-events:none}
+
+.ae-list{border:1px solid var(--line);border-radius:14px;overflow:hidden;border-top:1px solid var(--line)}
+.ae-row{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 14px;width:100%;text-align:left;position:relative}
+.ae-row + .ae-row{border-top:1px solid var(--hair)}
+.ae-row .ic{width:30px;height:30px}
+.ae-row .iconbtn svg{width:17px;height:17px}
+.ae-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;text-align:left;padding:2px 0}
+.ae-main b{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ae-main small{color:var(--muted);font-size:12.5px}
+button.ae-main:hover b{color:var(--accent)}
+.ae-add{color:var(--accent);transition:background .12s}
+.ae-add:hover{background:var(--fill)}
+.ae-add b{font-weight:600;font-size:15px}
+.ae-plus{background:var(--tint)!important;color:var(--accent)!important}
+.ae-plus svg{width:15px;height:15px}
+.is-arch .ic{opacity:.5}
+.btn.sm{padding:5px 10px;font-size:13px}
+
+#area-form{display:flex;flex-direction:column;gap:16px}
+.ae-prev{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:var(--sunk)}
+.ae-prev .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+.ae-prev b{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ae-prev small{color:var(--muted);font-size:13px;min-height:1em}
+.ae-colors{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:28px;height:28px;border-radius:50%;background:var(--c);position:relative;flex:none;cursor:pointer;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 10%,transparent);transition:transform .12s}
+.sw:hover{transform:scale(1.08)}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--c)}
+.sw-custom{background:var(--fill);color:var(--text2);display:grid;place-items:center;--c:var(--ring)}
+.sw-custom svg{width:14px;height:14px}
+.sw-custom[style]{background:var(--c);color:#fff}
+.sw-custom input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;padding:0;border:0}
+.ae-marks{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:8px}
+.ae-mark{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;background:var(--sunk);border:1.5px solid transparent;transition:border-color .12s,background .12s}
+.ae-mark:hover{background:var(--fill)}
+.ae-mark.on{border-color:var(--accent);background:var(--tint)}
+.ae-mark .ic{width:30px;height:30px}
+.ae-mark .ic svg{width:16px;height:16px}
+.ae-mark .ic.logo svg{width:100%;height:100%}
+.ae-up{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:2px}
+.ae-up .btn{cursor:pointer}
+.ae-up .btn svg{width:17px;height:17px}
+.field input.bad{border-color:var(--red)}
+.gp.small{font-size:12.5px;color:var(--muted)}
+.setlink{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--sunk);text-align:left;width:100%;font-weight:500;transition:background .12s}
+.setlink:hover{background:var(--fill)}
+.setlink .grow{flex:1}
+.setlink .chev{width:14px;height:14px;color:var(--muted)}
+.ae-stack{display:flex}
+.ae-stack .ic{width:24px;height:24px;box-shadow:0 0 0 2px var(--sunk)}
+.ae-stack .ic + .ic{margin-left:-6px}
+.ae-stack .ic svg{width:12px;height:12px}
+.ae-stack .ic.logo svg{width:100%;height:100%}
+.ae-stack .ic.mono{font-size:10px}
 /* ---------- Health HQ polish: closer to the mockup, calmer cards, small motions ---------- */
 .hq .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .hq-avatar{flex:none;width:40px;height:40px;border-radius:20px;background:var(--hq-sunk);color:var(--hq-ink);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center}

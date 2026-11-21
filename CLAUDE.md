@@ -16,6 +16,8 @@ Personal task app for one owner who runs four areas: Baselab (short-form video c
 - Reminders: `public/sw.js` shows pushes. `/api/push/tick` runs every minute from Supabase pg_cron (`supabase/reminders-cron.sql`) and uses the service key via `lib/push-server.js`. `lib/recur.js` holds date logic shared by board and server (repeats, reminder times). Setup steps: `docs/reminders-setup.md`.
 - Health: `lib/health-plan.js` holds Seni's plan from Health HQ (workouts, meals with times, targets, checkpoints, daily routine); edit it when the plan changes. `lib/health.js` renders the Health view (Train, Food, Progress) and the Today card. Logs go to `health_logs` (ids like `w-<day>`, `s-<day>-<exercise>`, `m-<day>-<meal>`).
 
+- Demo: `/demo` (`components/Demo.jsx`, `lib/demo.js`) runs the board on in-memory sample data with no sign-in. Locally: `npm install`, `npm run demo`, open http://localhost:3000/demo.
+
 ## Design rules (the owner rejected gradient/glow "AI" looks)
 - Flat, Apple-like: white surfaces, hairline borders, system font, blue as the only button color.
 - Area colors appear only as small dots, checkmarks and logos. D&G and True North use their real app icons (in `AREAS[].logo`).

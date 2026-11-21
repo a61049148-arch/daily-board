@@ -1,5 +1,6 @@
 // Called every minute by Supabase pg_cron (see supabase/reminders-cron.sql). Sends due reminders and the morning summary.
 import { adminDb, cronOk, missing, notConfigured, sendAll, taskPayload } from "@/lib/push-server";
+import { runRecap } from "@/lib/recap";
 import { addDays, localNow, parseHM, remindKey, remindStamp, stamp } from "@/lib/recur";
 
 export const dynamic = "force-dynamic";
@@ -54,7 +55,10 @@ async function handle(req) {
   const byUser = new Map();
   for (const s of subs || []) byUser.set(s.user_id, [...(byUser.get(s.user_id) || []), s]);
   let sent = 0;
-  for (const [userId, list] of byUser) sent += await runUser(userId, list);
+  for (const [userId, list] of byUser) {
+    sent += await runUser(userId, list);
+    await runRecap(adminDb(), userId, list[0].tz).catch(() => {});
+  }
   return Response.json({ ok: true, sent });
 }
 

@@ -1,0 +1,9 @@
+{
+  "id": "daily-board-sync",
+  "name": "Daily Board Sync",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Copies your Daily Board build log and daily recaps into this vault.",
+  "author": "Daily Board",
+  "isDesktopOnly": false
+}

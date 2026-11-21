@@ -145,3 +145,113 @@ do $$ begin
     alter publication supabase_realtime add table public.health_logs;
   end if;
 end $$;
+
+-- ---------- v1.3: build log, daily recaps, vault sync ----------
+-- Safe to run more than once.
+-- One row per finished piece of work, written by the build-log skill (log_build) or the board.
+create table if not exists public.builds (
+  id          text primary key default public.db_new_id('b'),
+  user_id     uuid not null default public.db_owner() references auth.users(id) on delete cascade,
+  area        text not null default 'personal' check (area in ('baselab','dg','truenorth','personal')),
+  size        text not null default 'big' check (size in ('big','small')),
+  title       text not null,
+  summary     text not null default '',
+  points      jsonb not null default '[]'::jsonb,   -- short bullet strings
+  open_items  text not null default '',             -- what is still open
+  live        boolean not null default false,
+  link        text not null default '',             -- file, repo path or URL
+  day         date not null default (now() at time zone 'America/Los_Angeles')::date,
+  at_time     text not null default '',             -- 'HH:MM' local
+  created     timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+create index if not exists builds_user_day on public.builds (user_id, day desc);
+
+-- One recap per day (id = YYYY-MM-DD). Written by /api/push/tick after 9 PM local.
+create table if not exists public.recaps (
+  id          text not null,
+  user_id     uuid not null default public.db_owner() references auth.users(id) on delete cascade,
+  text        text not null default '',              -- overall recap, markdown
+  areas       jsonb not null default '{}'::jsonb,    -- {truenorth: "...", dg: "..."}
+  build_count integer not null default 0,
+  created     timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  primary key (user_id, id)
+);
+
+do $$ declare t text; begin
+  foreach t in array array['builds','recaps'] loop
+    execute format('drop trigger if exists %I_touch on public.%I', t, t);
+    execute format('create trigger %I_touch before update on public.%I for each row execute function public.db_touch()', t, t);
+    execute format('alter table public.%I enable row level security', t);
+    execute format('drop policy if exists "owner only" on public.%I', t);
+    execute format('create policy "owner only" on public.%I for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid())', t);
+    execute format('alter table public.%I replica identity full', t);
+    if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end $$;
+
+-- Access tokens for tools outside the app (build-log skill, Obsidian plugin). Only the hash is stored.
+-- No policies: nobody can read this table through the API; only the functions below use it.
+create table if not exists public.api_tokens (
+  token_hash  text primary key,
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  label       text not null default '',
+  created     timestamptz not null default now()
+);
+alter table public.api_tokens enable row level security;
+
+create or replace function public.token_owner(tok text) returns uuid
+language sql stable security definer set search_path = public, extensions as $$
+  select user_id from public.api_tokens where token_hash = encode(extensions.digest(coalesce(tok, ''), 'sha256'), 'hex')
+$$;
+revoke execute on function public.token_owner(text) from public, anon, authenticated;
+
+-- Called by the build-log skill: log_build(token, {area,size,title,summary,points,openItems,live,link,day,time,id?})
+create or replace function public.log_build(tok text, entry jsonb) returns text
+language plpgsql security definer set search_path = public as $$
+declare uid uuid := public.token_owner(tok); bid text;
+begin
+  if uid is null then raise exception 'bad token' using errcode = '28000'; end if;
+  if coalesce(entry->>'title', '') = '' then raise exception 'title required'; end if;
+  bid := coalesce(nullif(entry->>'id', ''), public.db_new_id('b'));
+  insert into public.builds (id, user_id, area, size, title, summary, points, open_items, live, link, day, at_time)
+  values (bid, uid,
+    case when entry->>'area' in ('baselab','dg','truenorth','personal') then entry->>'area' else 'personal' end,
+    case when entry->>'size' = 'small' then 'small' else 'big' end,
+    left(entry->>'title', 200), left(coalesce(entry->>'summary', ''), 2000),
+    case when jsonb_typeof(entry->'points') = 'array' then entry->'points' else '[]'::jsonb end,
+    left(coalesce(entry->>'openItems', ''), 1000), coalesce((entry->>'live')::boolean, false),
+    left(coalesce(entry->>'link', ''), 500),
+    coalesce(nullif(entry->>'day', '')::date, (now() at time zone 'America/Los_Angeles')::date),
+    coalesce(nullif(entry->>'time', ''), to_char(now() at time zone 'America/Los_Angeles', 'HH24:MI')))
+  on conflict (id) do update set area = excluded.area, size = excluded.size, title = excluded.title, summary = excluded.summary,
+    points = excluded.points, open_items = excluded.open_items, live = excluded.live, link = excluded.link
+    where public.builds.user_id = uid;
+  return bid;
+end $$;
+
+-- Called by the Obsidian plugin: entries and recaps on or after a day, optionally for one area.
+create or replace function public.vault_feed(tok text, since date, only_area text default null) returns jsonb
+language plpgsql stable security definer set search_path = public as $$
+declare uid uuid := public.token_owner(tok);
+begin
+  if uid is null then raise exception 'bad token' using errcode = '28000'; end if;
+  return jsonb_build_object(
+    'builds', coalesce((select jsonb_agg(to_jsonb(b) - 'user_id' order by b.day desc, b.at_time desc) from public.builds b
+                where b.user_id = uid and b.day >= since and (only_area is null or b.area = only_area)), '[]'::jsonb),
+    'recaps', coalesce((select jsonb_agg(jsonb_build_object('id', r.id, 'text', r.text, 'areas', r.areas, 'updated_at', r.updated_at) order by r.id desc)
+                from public.recaps r where r.user_id = uid and r.id >= since::text), '[]'::jsonb));
+end $$;
+
+-- Builds from the last two weeks, for "what did I build" without the vault.
+create or replace function public.recent_builds(tok text, days integer default 14) returns jsonb
+language sql stable security definer set search_path = public as $$
+  select public.vault_feed(tok, ((now() at time zone 'America/Los_Angeles')::date - least(greatest(days, 1), 90)), null)
+$$;
+
+grant execute on function public.log_build(text, jsonb) to anon, authenticated;
+grant execute on function public.vault_feed(text, date, text) to anon, authenticated;
+grant execute on function public.recent_builds(text, integer) to anon, authenticated;

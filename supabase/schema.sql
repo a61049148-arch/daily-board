@@ -91,3 +91,30 @@ do $$ declare t text; begin
     end if;
   end loop;
 end $$;
+
+-- ---------- v1.1: times, reminders, repeats, phone notifications ----------
+-- Safe to run more than once.
+alter table public.tasks add column if not exists at_time      text    not null default '';   -- 'HH:MM' local time, '' = no time
+alter table public.tasks add column if not exists remind_min   integer;                         -- minutes before at_time; null = no reminder
+alter table public.tasks add column if not exists alarm        boolean not null default false;  -- also set an iPhone alarm (via the Shortcut)
+alter table public.tasks add column if not exists repeat       text    not null default '';   -- '', daily, weekdays, weekly, monthly
+alter table public.tasks add column if not exists reminded_key text    not null default '';   -- server: which due|time|remind was last notified
+create index if not exists tasks_user_timed on public.tasks (user_id, due) where not done and at_time <> '';
+
+-- One row per device that turned on notifications. Written by the server only.
+create table if not exists public.push_subs (
+  endpoint      text primary key,
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  p256dh        text not null,
+  auth          text not null,
+  tz            text not null default 'America/Los_Angeles',
+  morning       text not null default '08:00',  -- morning summary time, '' = off
+  morning_sent  date,
+  created       timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+alter table public.push_subs enable row level security;
+drop policy if exists "owner only" on public.push_subs;
+create policy "owner only" on public.push_subs for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+drop trigger if exists push_subs_touch on public.push_subs;
+create trigger push_subs_touch before update on public.push_subs for each row execute function public.db_touch();

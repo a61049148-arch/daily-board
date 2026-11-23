@@ -332,3 +332,10 @@ alter table public.tasks add constraint tasks_claude_check check (claude in ('',
 -- ---------- How long a task takes ----------
 -- estimate_min: minutes, null = not set. Focus uses it as the timer length; Plan my day uses it as the block length.
 alter table public.tasks add column if not exists estimate_min integer;
+
+-- ---------- How to do it (the guide beside the task popup) ----------
+-- guide_steps: one step per line.
+alter table public.tasks add column if not exists guide_what  text not null default '';
+alter table public.tasks add column if not exists guide_why   text not null default '';
+alter table public.tasks add column if not exists guide_steps text not null default '';
+alter table public.tasks add column if not exists guide_done  text not null default '';

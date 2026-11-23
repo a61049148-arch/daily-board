@@ -26,7 +26,8 @@ Personal task app for one owner who runs four areas: Baselab (short-form video c
 ## Design rules (the owner rejected gradient/glow "AI" looks)
 - Flat, Apple-like: white surfaces, hairline borders, system font, blue as the only button color.
 - Area colors appear only as small dots, checkmarks and logos. D&G and True North use their real app icons (in `AREAS[].logo`).
-- No emoji, no sparkle icons, no gradients, no glows. Light and dark themes both work through CSS variables in `app/globals.css`.
+- No emoji, no sparkle icons, no gradients, no glows.
+- Popups sit on a frosted, blurred layer and move with one spring curve (`--spring`); on the phone the page behind steps back and a sheet can be pulled down to close (`closeSheet` animates out). Blue marks only the main action on a screen: priority marks, badges, selected filters and secondary buttons stay neutral. Light and dark themes both work through CSS variables in `app/globals.css`.
 
 ## Checks before pushing
 - `npm run build` passes.

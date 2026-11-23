@@ -328,3 +328,7 @@ alter table public.tasks drop constraint if exists tasks_priority_check;
 alter table public.tasks add constraint tasks_priority_check check (priority in ('', 'high', 'medium', 'low'));
 alter table public.tasks drop constraint if exists tasks_claude_check;
 alter table public.tasks add constraint tasks_claude_check check (claude in ('', 'yes', 'help', 'you'));
+
+-- ---------- How long a task takes ----------
+-- estimate_min: minutes, null = not set. Focus uses it as the timer length; Plan my day uses it as the block length.
+alter table public.tasks add column if not exists estimate_min integer;
